@@ -8,6 +8,12 @@ posts_df = spark.read.option("header", True).csv("input/posts.csv", inferSchema=
 users_df = spark.read.option("header", True).csv("input/users.csv", inferSchema=True)
 
 # TODO: Implement the task here
+joined_df = posts_df.join(users_df, on="UserID")
+
+engagement_df = joined_df.groupBy("AgeGroup").agg(
+    avg("Likes").alias("Avg_Likes"),
+    avg("Retweets").alias("Avg_Retweets")
+).orderBy(col("Avg_Likes").desc())
 
 
 # Save result

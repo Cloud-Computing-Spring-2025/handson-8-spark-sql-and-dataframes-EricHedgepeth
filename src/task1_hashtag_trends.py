@@ -8,6 +8,12 @@ spark = SparkSession.builder.appName("HashtagTrends").getOrCreate()
 posts_df = spark.read.option("header", True).csv("input/posts.csv")
 
 # TODO: Split the Hashtags column into individual hashtags and count the frequency of each hashtag and sort descending
+hashtags_df = posts_df.select(
+    explode(split(col("Hashtags"), ",")).alias("Hashtag")
+)
+
+
+hashtag_counts = hashtags_df.groupBy("Hashtag").count().orderBy(col("count").desc())
 
 
 # Save result
